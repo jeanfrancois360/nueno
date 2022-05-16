@@ -10,7 +10,7 @@ import Shell from "@components/Shell";
 type Attributes = { type: string; label: string; required: boolean; order: number }[];
 type FieldAttributes = { fields: Attributes; jobUid: string };
 
-export default function JobsNew() {
+export default function FieldsNew() {
   const router = useRouter();
   const jobUid = asStringOrUndefined(router.query.id);
   const [fields, setFields] = useState([
@@ -46,7 +46,7 @@ export default function JobsNew() {
     const items = target?.getElementsByClassName("draggable") ?? [];
     let index = 0;
     const newFields = [...fields];
-    for (let i = 0; i <= items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
       const id: string = items[i].getAttribute("id") ?? "";
       newFields[parseInt(id)] = { ...newFields[parseInt(id)], ["order"]: index };
       index++;
@@ -70,7 +70,7 @@ export default function JobsNew() {
       // (B2) DRAG START - YELLOW HIGHLIGHT DROPZONES
       i.ondragstart = () => {
         current = i;
-        for (let k = 0; k <= items.length; k++) {
+        for (let k = 0; k < items.length; k++) {
           const it = items[k];
           if (it != current) {
             it.classList.add("hint");
@@ -92,7 +92,7 @@ export default function JobsNew() {
 
       // (B5) DRAG END - REMOVE ALL HIGHLIGHTS
       i.ondragend = () => {
-        for (let k = 0; k <= items.length; k++) {
+        for (let k = 0; k < items.length; k++) {
           const it = items[k];
           it.classList.remove("hint");
           it.classList.remove("active");
@@ -191,7 +191,7 @@ export default function JobsNew() {
                             aria-hidden="true"
                           />
                           <div className="flex-auto p-2 bg-gray-100 rounded">
-                            <p className="text-sm font-semibold text-md">Type</p>
+                            <p className="py-1 text-sm font-semibold text-md">Type</p>
                             <select
                               value={field.type}
                               onChange={(e) => updateField(e.target.value, index, "type")}
@@ -202,7 +202,15 @@ export default function JobsNew() {
                               <option value="SELECT">Select one</option>
                               <option value="MULTI_SELECT">Select multiple</option>
                             </select>
-                            <p className="text-sm font-semibold text-md">Label</p>
+                            <p className="py-1 text-sm font-semibold text-md">Required</p>
+                            <select
+                              value={field.required}
+                              onChange={(e) => updateField(e.target.value, index, "required")}
+                              className="block w-full p-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                              <option value="true">True</option>
+                              <option value="false">False</option>
+                            </select>
+                            <p className="py-1 text-sm font-semibold text-md">Label</p>
                             <input
                               id="label"
                               name="label"

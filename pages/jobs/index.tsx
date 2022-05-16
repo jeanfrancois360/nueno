@@ -46,7 +46,7 @@ export default function Jobs() {
 
                 <h3 className="mt-3 text-xl font-bold text-gray-800">{job.title}</h3>
                 <p className="mt-4 text-sm text-gray-500">{job.description}</p>
-                <Link href="/jobs/new">
+                <Link href={"/jobs/apply/" + job.uid + "/application-form"}>
                   <button
                     type="button"
                     className="inline-flex items-center px-4 py-2 mt-4 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
