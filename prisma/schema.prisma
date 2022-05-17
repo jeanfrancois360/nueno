@@ -69,8 +69,6 @@ model Field {
   companyId   Int?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  Candidate   Candidate?    @relation(fields: [candidateId], references: [id])
-  candidateId Int?
 }
 
 model FieldValue {
@@ -94,7 +92,6 @@ model Candidate {
   Job        Job          @relation(fields: [jobId], references: [id], onDelete: Cascade)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  Field      Field[]
 }
 
 model FieldChoice {
