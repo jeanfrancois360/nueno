@@ -11,16 +11,15 @@ import Shell from "@components/Shell";
 type Attributes = { fieldId: number; text: string }[] | undefined;
 
 export default function ApplicationForm() {
-  const { isLoading, data: fields } = useQuery("fields", getFields);
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [fieldValues, setFieldValues] = useState<Attributes>([]);
   const router = useRouter();
   const jobUid = asStringOrUndefined(router.query.id);
-  async function getFields() {
-    const requestParams = { data: { jobUid } };
-    const response = await axios.get("/api/application-forms/list", requestParams);
+  const { isLoading, data: fields } = useQuery(["jobUid", jobUid], () => getFields(jobUid));
+  async function getFields(jobUid) {
+    const response = await axios.get(`/api/application-forms/${jobUid}`);
     const responseData: FieldsListResponseParams = response.data;
     addFieldValues(responseData);
     return responseData;
@@ -42,8 +41,8 @@ export default function ApplicationForm() {
     if (!jobUid) return;
 
     try {
-      const requestParams = { jobUid };
-      await axios.post("/api/application-forms/create", requestParams);
+      const requestParams = { jobUid, firstName, lastName, email, fieldValues };
+      await axios.post("/api/candidates/create", requestParams);
 
       router.push({ pathname: "/jobs/" });
     } catch (e) {
@@ -86,7 +85,7 @@ export default function ApplicationForm() {
                         required
                         className="block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         placeholder="First Name"
-                        value={first_name}
+                        value={firstName}
                         onInput={(e) => setFirstName(e.currentTarget.value)}
                       />
                     </div>
@@ -103,7 +102,7 @@ export default function ApplicationForm() {
                         required
                         className="block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         placeholder="Last Name"
-                        value={last_name}
+                        value={lastName}
                         onInput={(e) => setLastName(e.currentTarget.value)}
                       />
                     </div>

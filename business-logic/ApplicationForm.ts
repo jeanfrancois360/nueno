@@ -37,6 +37,11 @@ export default class ApplicationFormEntity {
         companyId: user.companyId,
         jobId: job.id,
       },
+      orderBy: [
+        {
+          order: "asc",
+        },
+      ],
       include: {
         FieldValue: true,
         FieldChoice: true,
