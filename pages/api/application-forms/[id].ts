@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const { jobUid } = req.query;
-    const response: ResponseParams = await entity.list(session.user.id, jobUid);
+    const response: ResponseParams = await entity.list(session.user.id, jobUid.toString());
     return res.status(200).json(response);
   } catch (error) {
     if (error instanceof HttpError) return res.status(error.code).json(error.message);

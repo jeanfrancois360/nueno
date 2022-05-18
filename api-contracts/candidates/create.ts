@@ -1,5 +1,5 @@
 export type CandidatesCreateRequestParams = {
-  jobId: number;
+  jobUid: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -11,7 +11,7 @@ export type CandidatesCreateResponseParams = {
   firstName: string;
   lastName: string;
   email: string;
-  fieldValues: FieldValueAttributes[];
+  fieldValue?: FieldValueAttributes[];
 };
 
 export type FieldValueAttributes = {

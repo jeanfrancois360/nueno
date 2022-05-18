@@ -1,4 +1,4 @@
-import { ApplicationFormsCreateResponseParams as ResponseParams } from "@api-contracts/application-forms/create";
+import { CandidatesCreateResponseParams as ResponseParams } from "@api-contracts/candidates/create";
 import CandidateEntity from "@business-logic/Candidate";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const entity = new CandidateEntity();
 
   try {
-    const response: ResponseParams = await entity.create(req.body, session.user.id);
+    const response: ResponseParams = await entity.create(req.body);
     return res.status(200).json(response);
   } catch (error) {
     if (error instanceof HttpError) return res.status(error.code).json(error.message);

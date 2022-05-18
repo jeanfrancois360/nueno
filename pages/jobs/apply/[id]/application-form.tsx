@@ -1,7 +1,7 @@
 import { FieldsListResponseParams } from "@api-contracts/application-forms/list";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useState, BaseSyntheticEvent, SetStateAction } from "react";
+import { useState, BaseSyntheticEvent, SetStateAction, ReactElement } from "react";
 import { useQuery } from "react-query";
 
 import { asStringOrUndefined } from "@helpers/type-safety";
@@ -18,7 +18,7 @@ export default function ApplicationForm() {
   const router = useRouter();
   const jobUid = asStringOrUndefined(router.query.id);
   const { isLoading, data: fields } = useQuery(["jobUid", jobUid], () => getFields(jobUid));
-  async function getFields(jobUid) {
+  async function getFields(jobUid: string | undefined) {
     const response = await axios.get(`/api/application-forms/${jobUid}`);
     const responseData: FieldsListResponseParams = response.data;
     addFieldValues(responseData);
@@ -32,7 +32,7 @@ export default function ApplicationForm() {
     setFieldValues(values);
   }
   function updateFieldValue(value: string | number, index: number, key: string) {
-    const newFieldValues = [...fieldValues];
+    const newFieldValues = JSON.parse(JSON.stringify(fieldValues));
     newFieldValues[index] = { ...newFieldValues[index], [key]: value };
     setFieldValues(newFieldValues);
   }
@@ -41,7 +41,7 @@ export default function ApplicationForm() {
     if (!jobUid) return;
 
     try {
-      const requestParams = { jobUid, firstName, lastName, email, fieldValues };
+      const requestParams = { jobUid, firstName, lastName, email, fieldValue: fieldValues };
       await axios.post("/api/candidates/create", requestParams);
 
       router.push({ pathname: "/jobs/" });
@@ -124,59 +124,61 @@ export default function ApplicationForm() {
                       />
                     </div>
                   </div>
-                  {fields.map((field, index) => {
-                    let inputElement: HTMLElement = null;
-                    switch (field.type) {
-                      case "SHORT_TEXT":
-                        inputElement = (
-                          <div className="px-4 py-5 bg-white sm:p-6" key={index}>
-                            <div>
-                              <label
-                                htmlFor={field.label}
-                                className="block mb-2 text-sm font-medium text-gray-700">
-                                <span className="pr-1 text-red-600">*</span> {field.label}
-                              </label>
-                              <input
-                                id={field.label}
-                                name={field.label}
-                                type="text"
-                                required={field.required}
-                                className="block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                placeholder={field.label}
-                                value={fieldValues[index].text}
-                                onInput={(e) => updateFieldValue(e.currentTarget.value, index, "text")}
-                              />
-                            </div>
-                          </div>
-                        );
-                        break;
-                      case "LONG_TEXT":
-                        inputElement = (
-                          <div className="px-4 py-5 bg-white sm:p-6" key={index}>
-                            <div>
-                              <label
-                                htmlFor={field.label}
-                                className="block mb-2 text-sm font-medium text-gray-700">
-                                {field.required ? <span className="pr-1 text-red-600">*</span> : null}
-                                {field.label}
-                              </label>
-                              <textarea
-                                id={field.label}
-                                name={field.label}
-                                required
-                                className="block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                rows={8}
-                                placeholder={field.label}
-                                value={fieldValues[index].text}
-                                onInput={(e) => updateFieldValue(e.currentTarget.value, index, "text")}
-                              />
-                            </div>
-                          </div>
-                        );
-                        break;
-                    }
-                    return inputElement;
-                  })}
+                  {fields
+                    ? fields.map((field, index) => {
+                        let inputElement: ReactElement | null = null;
+                        switch (field.type) {
+                          case "SHORT_TEXT":
+                            inputElement = (
+                              <div className="px-4 py-5 bg-white sm:p-6" key={index}>
+                                <div>
+                                  <label
+                                    htmlFor={field.label}
+                                    className="block mb-2 text-sm font-medium text-gray-700">
+                                    <span className="pr-1 text-red-600">*</span> {field.label}
+                                  </label>
+                                  <input
+                                    id={field.label}
+                                    name={field.label}
+                                    type="text"
+                                    required={field.required}
+                                    className="block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    placeholder={field.label}
+                                    value={fieldValues ? fieldValues[index].text : ""}
+                                    onInput={(e) => updateFieldValue(e.currentTarget.value, index, "text")}
+                                  />
+                                </div>
+                              </div>
+                            );
+                            break;
+                          case "LONG_TEXT":
+                            inputElement = (
+                              <div className="px-4 py-5 bg-white sm:p-6" key={index}>
+                                <div>
+                                  <label
+                                    htmlFor={field.label}
+                                    className="block mb-2 text-sm font-medium text-gray-700">
+                                    {field.required ? <span className="pr-1 text-red-600">*</span> : null}
+                                    {field.label}
+                                  </label>
+                                  <textarea
+                                    id={field.label}
+                                    name={field.label}
+                                    required
+                                    className="block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    rows={8}
+                                    placeholder={field.label}
+                                    value={fieldValues ? fieldValues[index].text : ""}
+                                    onInput={(e) => updateFieldValue(e.currentTarget.value, index, "text")}
+                                  />
+                                </div>
+                              </div>
+                            );
+                            break;
+                        }
+                        return inputElement;
+                      })
+                    : null}
 
                   <div className="px-4 py-5 bg-white sm:p-6">
                     <div>

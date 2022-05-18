@@ -204,7 +204,7 @@ export default function FieldsNew() {
                             </select>
                             <p className="py-1 text-sm font-semibold text-md">Required</p>
                             <select
-                              value={field.required}
+                              value={field.required.toString()}
                               onChange={(e) => updateField(e.target.value, index, "required")}
                               className="block w-full p-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500 sm:text-sm">
                               <option value="true">True</option>

@@ -1,4 +1,4 @@
-import { CandidatesCreateRequestParams } from "@api-contracts/jobs/create";
+import { CandidatesCreateRequestParams } from "@api-contracts/candidates/create";
 import JobEntity from "@business-logic/Job";
 
 import NotFoundError from "@helpers/errors/NotFoundError";
@@ -30,7 +30,7 @@ export default class CandidateEntity {
     return candidate;
   }
 
-  async list(jobUid: number) {
+  async list(jobUid: string) {
     const job = await new JobEntity().find(jobUid);
 
     if (!job) throw new NotFoundError("Job Not found");
