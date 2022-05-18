@@ -35,7 +35,7 @@ export default class CandidateEntity {
 
     if (!job) throw new NotFoundError("Job Not found");
 
-    return prisma?.field?.findMany({
+    return prisma?.candidate?.findMany({
       where: {
         jobId: job.id,
       },

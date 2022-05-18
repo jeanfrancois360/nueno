@@ -15,7 +15,7 @@ describe("Candidate", () => {
   });
 
   describe("#create", () => {
-    it("creates candidate", async () => {
+    it("creates a new candidate", async () => {
       const { user } = await minimalSetup();
       await Promise.all([createJob(user.companyId)]);
       const job = (await prisma.job.findFirst({
@@ -81,7 +81,7 @@ describe("Candidate", () => {
   });
 
   describe("#list", () => {
-    it("lists all jobs of user", async () => {
+    it("lists all candidates on a job", async () => {
       const { user } = await minimalSetup();
       await Promise.all([createJob(user.companyId)]);
       const job = (await prisma.job.findFirst({
@@ -116,18 +116,30 @@ describe("Candidate", () => {
           },
         ],
       };
+      const requestParams2 = {
+        firstName: "Franco",
+        lastName: "Richard",
+        email: "franco@gmail.com",
+        jobId: job.id,
+        fieldValues: [
+          {
+            fieldId: fieldsList[0].id,
+            text: "Hello",
+          },
+        ],
+      };
 
       const candidateEntity = new CandidateEntity();
       const candidate = await candidateEntity.create(requestParams);
-      const candidate2 = await candidateEntity.create(requestParams);
-      const result = await candidateEntity.list(job.id);
+      const candidate2 = await candidateEntity.create(requestParams2);
+      const result = await candidateEntity.list(job.uid);
 
       expect(result.length).toBe(2);
     });
 
     it("throws error if Job was not found", async () => {
-      const nonExistingJobUid = "ds43dsf999";
-      const entity = new ApplicationFormEntity();
+      const nonExistingJobUid = "9999999";
+      const entity = new CandidateEntity();
 
       await expect(async () => {
         await entity.list(nonExistingJobUid);
